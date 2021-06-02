@@ -1,4 +1,5 @@
 <#macro Outline title currentViewPath=VIEW_PATH!, currentUser=CURRENT_USER!>
+    <#setting time_zone="Asia/Seoul" />
     <#local title = "Security Test | ${title}" />
     <@compress single_line=true>
     <!DOCTYPE html>

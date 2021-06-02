@@ -23,10 +23,10 @@
                         <th scope="row"><#if document.notice>공지<#else>${document.displayId}</#if></th>
                         <td>
                             <div class="d-flex justify-content-between">
-                                <a href="/board/${document.displayId}" class="link-secondary">${document.title}</a> <span class="badge rounded-pill bg-dark">${document.replyCount}</span>
+                                <a href="/board/${document.displayId}" class="link-secondary">${document.title?html}</a> <span class="badge rounded-pill bg-dark">${document.replyCount}</span>
                             </div>
                         </td>
-                        <td>${document.authorNickname}</td>
+                        <td>${document.authorNickname?html}</td>
                         <td>${document.createdAt?string('yyyy년 M월 d일 HH:mm')}</td>
                     </tr>
                 </#list>

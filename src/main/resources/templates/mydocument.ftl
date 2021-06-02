@@ -13,7 +13,7 @@
             <#list DATA.itemList as document>
                 <tr>
                     <th scope="row">
-                        <a href="/board/${document.displayId}" class="link-secondary">${document.content} (${document.replyCount})</a>
+                        <a href="/board/${document.displayId}" class="link-secondary">${document.title?html} (${document.replyCount})</a>
                     </th>
                     <td>${document.createdAt?string('yyyy년 M월 H일 HH:mm')}</td>
                 </tr>

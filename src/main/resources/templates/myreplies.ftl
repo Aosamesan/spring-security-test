@@ -13,7 +13,7 @@
                 <#list DATA.itemList as reply>
                     <tr>
                         <th scope="row">
-                            <a href="/board/${reply.documentDisplayId}" class="link-secondary">${reply.content}</a>
+                            <a href="/board/${reply.documentDisplayId}" class="link-secondary">${reply.content?html}</a>
                         </th>
                         <td>${reply.createdAt?string('yyyy년 M월 H일 HH:mm')}</td>
                     </tr>

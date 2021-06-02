@@ -197,10 +197,10 @@
     <div class="d-grid">
         <figure>
             <blockquote class="blockquote">
-                <h3>${DOCUMENT.title}</h3>
+                <h3>${DOCUMENT.title?html}</h3>
             </blockquote>
             <figcaption class="blockquote-footer text-end">
-                ${DOCUMENT.authorNickname} (${DOCUMENT.authorUsername?replace("(.{3})(.*)", "$1\\*\\*\\*", "r")})
+                ${DOCUMENT.authorNickname?html} (${DOCUMENT.authorUsername?html?replace("(.{3})(.*)", "$1\\*\\*\\*", "r")})
             </figcaption>
         </figure>
         <hr />

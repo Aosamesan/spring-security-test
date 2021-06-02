@@ -4,9 +4,9 @@
     <#assign hasNoticeAuth = CURRENT_USER.authorities?seq_contains("WRITE_INFO") />
     <form class="form-control" onsubmit="return false;">
         <label for="title" class="form-label">제목</label>
-        <input type="text" name="title" id="title" class="form-control" value="${DOCUMENT.title}" />
+        <input type="text" name="title" id="title" class="form-control" value="${DOCUMENT.title?html}" />
         <label for="content" class="form-label">내용</label>
-        <textarea type="text" name="content" id="content" class="form-control noresize" rows="25">${DOCUMENT.content}</textarea>
+        <textarea type="text" name="content" id="content" class="form-control noresize" rows="25">${DOCUMENT.content?html}</textarea>
         <#if hasNoticeAuth>
             <div class="form-check">
                 <input id="notice" type="checkbox" class="form-check-input" name="notice" <#if DOCUMENT.notice>checked</#if>/>
