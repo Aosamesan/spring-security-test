@@ -40,7 +40,7 @@ public class UserHandler {
                         .username(formData.getFirst("username"))
                         .password(passwordEncoder.encode(formData.getFirst("password")))
                         .nickname(formData.getFirst("nickname"))
-                        .userLevel(UserLevel.READY)
+                        .userLevel(UserLevel.USER)
                         .createdAt(now)
                         .updatedAt(now)
                         .lastPasswordModifiedAt(now)

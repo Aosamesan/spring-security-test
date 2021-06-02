@@ -85,43 +85,13 @@
     </table>
 </#macro>
 
-<#macro printPageNavigation pagingInfo total>
-    <#local start = pagingInfo.start />
-    <#local display = pagingInfo.display />
-    <#local currentPage = pagingInfo.currentPage />
-    <#local totalPage = (total / display)?floor + 1/>
-    <#local isFirst = (currentPage == 1) />
-    <#local isLast = (currentPage == totalPage) />
-    <#local pageStart = (currentPage > 4)?then(currentPage - 3, 1) />
-    <#local pageEnd = (currentPage + 3 > totalPage)?then(totalPage, currentPage + 3) />
-    <nav>
-        <ul class="pagination justify-content-center">
-            <li class="page-item<#if isFirst> disabled</#if>">
-                <a href="?start=${start - display}&display=${display}" class="page-link" aria-label="Previous">
-                    <span aria-hidden="true">&laquo;</span>
-                </a>
-            </li>
-            <#list (pageStart..pageEnd) as idx>
-                <li class="page-item<#if idx == currentPage> active</#if>">
-                    <a href="?start=${(idx - 1) * display}&display=${display}" class="page-link">${idx}</a>
-                </li>
-            </#list>
-            <li class="page-item<#if isLast> disabled</#if>">
-                <a href="?start=${start + display}&display=${display}" class="page-link">
-                    <span aria-hidden="true">&raquo;</span>
-                </a>
-            </li>
-        </ul>
-    </nav>
-</#macro>
 
-
-<@common.Outline title="Security Test | Admin Menu">
+<@common.Outline title="회원 관리">
     <div class="d-grid">
         <@printTable DATA.itemList DATA.pagingInfo />
     </div>
     <div class="d-grid">
-        <@printPageNavigation DATA.pagingInfo DATA.total />
+        <@common.printPageNavigation DATA.pagingInfo DATA.total />
     </div>
     <script>
         (function () {

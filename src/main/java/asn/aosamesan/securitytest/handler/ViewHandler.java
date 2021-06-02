@@ -4,6 +4,7 @@ import asn.aosamesan.securitytest.model.api.PageableResult;
 import asn.aosamesan.securitytest.model.api.PagingParameter;
 import asn.aosamesan.securitytest.model.dto.User;
 import asn.aosamesan.securitytest.repository.UserRepository;
+import asn.aosamesan.securitytest.utils.BoardDocumentHandlerUtils;
 import org.springframework.data.domain.Sort;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.ReactiveSecurityContextHolder;
@@ -21,9 +22,11 @@ import java.util.Map;
 @Component
 public class ViewHandler {
     private final UserRepository userRepository;
+    private final BoardDocumentHandlerUtils boardDocumentHandlerUtils;
 
-    public ViewHandler(UserRepository userRepository) {
+    public ViewHandler(UserRepository userRepository, BoardDocumentHandlerUtils boardDocumentHandlerUtils) {
         this.userRepository = userRepository;
+        this.boardDocumentHandlerUtils = boardDocumentHandlerUtils;
     }
 
     public Mono<ServerResponse> index(ServerRequest request) {
@@ -40,7 +43,7 @@ public class ViewHandler {
 
     public Mono<ServerResponse> admin(ServerRequest request) {
         var pagingParam = PagingParameter.fromQueryParams(request.queryParams());
-        return userRepository.findAll(Sort.by("username").ascending())
+        return userRepository.findAll(Sort.by("createdAt").descending())
                 .skip(pagingParam.getStart())
                 .take(pagingParam.getDisplay())
                 .collectList()
@@ -55,7 +58,47 @@ public class ViewHandler {
     }
 
     public Mono<ServerResponse> board(ServerRequest request) {
-        return render("board", request, Collections.emptyMap());
+        var pagingParam = PagingParameter.fromQueryParams(request.queryParams());
+        return boardDocumentHandlerUtils
+                .findAll(pagingParam)
+                .zipWith(ReactiveSecurityContextHolder.getContext().map(SecurityContext::getAuthentication).map(Authentication::getDetails).cast(User.class))
+                .map(tuple -> new HashMap<String, Object>() {{
+                    put("DATA", tuple.getT1());
+                    put("CURRENT_USER", tuple.getT2());
+                }})
+                .flatMap(model -> render("board", request, model));
+    }
+
+    public Mono<ServerResponse> boardDetail(ServerRequest request) {
+        var id = Long.parseLong(request.pathVariable("id"));
+        return boardDocumentHandlerUtils
+                .findOne(id)
+                .flatMap(document -> render("document", request, Collections.singletonMap("DOCUMENT", document)));
+    }
+
+    public Mono<ServerResponse> boardNew(ServerRequest request) {
+        return render("new", request);
+    }
+
+    public Mono<ServerResponse> boardEdit(ServerRequest request) {
+        var id = Long.parseLong(request.pathVariable("id"));
+        return boardDocumentHandlerUtils
+                .checkCurrentUserWriteDocument(id)
+                .flatMap(document -> render("edit", request, Collections.singletonMap("DOCUMENT", document)));
+    }
+
+    public Mono<ServerResponse> boardMine(ServerRequest request) {
+        var pagingParam = PagingParameter.fromQueryParams(request.queryParams());
+        return boardDocumentHandlerUtils
+                .findOwnDocuments(pagingParam)
+                .flatMap(data -> render("mydocument", request, Collections.singletonMap("DATA", data)));
+    }
+
+    public Mono<ServerResponse> repliesMine(ServerRequest request) {
+        var pagingParam = PagingParameter.fromQueryParams(request.queryParams());
+        return boardDocumentHandlerUtils
+                .findOwnReplies(pagingParam)
+                .flatMap(data -> render("myreplies", request, Collections.singletonMap("DATA", data)));
     }
 
     private Mono<ServerResponse> render(String viewName, ServerRequest request) {
@@ -71,10 +114,10 @@ public class ViewHandler {
                 .switchIfEmpty(Mono.just(Collections.emptyMap()))
                 .flatMap(
                         userMap -> ServerResponse.ok().render(viewName, new HashMap<>() {{
-                                    putAll(model);
-                                    putAll(userMap);
-                                    put("VIEW_PATH", request.path());
-                                }})
+                            putAll(model);
+                            putAll(userMap);
+                            put("VIEW_PATH", request.path());
+                        }})
                 );
     }
 

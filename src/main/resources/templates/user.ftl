@@ -1,23 +1,27 @@
 <#import "./common.ftl" as common />
 
-<@common.Outline title="Security Test | User Info">
-    <div class="form-control mb-3">
-        <#list CURRENT_USER.authorities as authority>
-            <#switch authority>
-                <#case "READ">
-                    <span class="badge rounded-pill bg-primary">읽기</span>
-                    <#break />
-                <#case "WRITE">
-                    <span class="badge rounded-pill bg-danger">쓰기</span>
-                    <#break />
-                <#case "WRITE_INFO">
-                    <span class="badge rounded-pill bg-success">공지 쓰기</span>
-                    <#break />
-                <#case "USER_CONFIG">
-                    <span class="badge rounded-pill bg-dark">회원 관리</span>
-                    <#break />
-            </#switch>
-        </#list>
+<@common.Outline title="내 정보">
+    <div class="border border-1 rounded mb-3 p-2">
+        <#if CURRENT_USER.authorities?has_content>
+            <#list CURRENT_USER.authorities as authority>
+                <#switch authority>
+                    <#case "READ">
+                        <span class="badge rounded-pill bg-primary">읽기</span>
+                        <#break />
+                    <#case "WRITE">
+                        <span class="badge rounded-pill bg-danger">쓰기</span>
+                        <#break />
+                    <#case "WRITE_INFO">
+                        <span class="badge rounded-pill bg-success">공지 쓰기</span>
+                        <#break />
+                    <#case "USER_CONFIG">
+                        <span class="badge rounded-pill bg-dark">회원 관리</span>
+                        <#break />
+                </#switch>
+            </#list>
+        <#else>
+            <span class="badge round-pill bg-dark">권한 없음</span>
+        </#if>
     </div>
     <form class="form-control" onsubmit="return false;">
         <div class="mb-3">

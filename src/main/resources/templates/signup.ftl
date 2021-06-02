@@ -1,6 +1,6 @@
 <#import "./common.ftl" as common />
 
-<@common.Outline title="Security Test | Sign Up">
+<@common.Outline title="가입하기">
     <form class="form-control" onsubmit="return false;">
         <div class="mb-3">
             <label for="username" class="form-label">아이디</label>

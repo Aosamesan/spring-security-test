@@ -29,16 +29,40 @@ public class SecurityConfiguration {
                 .and()
                 .authorizeExchange()
                 // 전체 가능
-                .pathMatchers("/", "/static/**", "/login", "/signup")
+                .pathMatchers("/", "/static/**", "/login", "/signup", "/favicon.ico")
                 .permitAll()
                 .pathMatchers(HttpMethod.POST, "/api/users")
                 .permitAll()
                 // 로그인 시 가능
-                .pathMatchers("/api/users", "/user")
+                .pathMatchers("/api/users", "/user", "/api/documents/my", "/api/replies")
                 .authenticated()
+                // WRITE 가 있을 때만 가능
+                .pathMatchers(HttpMethod.POST, "/api/documents")
+                .hasAuthority(UserAuthorities.WRITE.getAuthority())
+                .pathMatchers(HttpMethod.PUT, "/api/documents/{id:[\\d+]}")
+                .hasAuthority(UserAuthorities.WRITE.getAuthority())
+                .pathMatchers(HttpMethod.DELETE, "/api/documents/{id:[\\d+]}")
+                .hasAuthority(UserAuthorities.WRITE.getAuthority())
+                .pathMatchers("/board/new", "/board/{id:[\\d+]}/edit")
+                .hasAuthority(UserAuthorities.WRITE.getAuthority())
+                .pathMatchers("/api/documents/{id:[\\d]+}/replies", "/api/replies/{id}")
+                .hasAuthority(UserAuthorities.WRITE.getAuthority())
                 // READ 가 있을 때만 가능
-                .pathMatchers("/board")
+                .pathMatchers(
+                        "/board",
+                        "/board/{id:[\\d+]}",
+                        "/board/my",
+                        "/replies/my",
+                        "/api/documents",
+                        "/api/documents/{id:[\\d+]}",
+                        "/api/documents/users/{username}"
+                )
                 .hasAuthority(UserAuthorities.READ.getAuthority())
+                .pathMatchers(HttpMethod.GET, "/api/documents/{id:[\\d+]}")
+                .hasAuthority(UserAuthorities.READ.getAuthority())
+                // WRITE_INFO 가능
+                .pathMatchers("/api/documents/freeze/{id:[\\d+]}")
+                .hasAuthority(UserAuthorities.WRITE_INFO.getAuthority())
                 // USER_CONFIG만 가능
                 .pathMatchers("/admin", "/api/admin/**")
                 .hasAnyAuthority(UserAuthorities.USER_CONFIG.getAuthority())
